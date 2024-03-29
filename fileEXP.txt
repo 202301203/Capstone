@@ -1,0 +1,3 @@
+file has names of series accpring to their order.
+or we can just make 2 files (if thats allowed) one containing the set of series (i dont thnik that would be necessary)
+putting series accprding to their free slot(and according to the clock; example: the 1st series of the day would be at the top of the file, theyre sorted accordung to their time period) tehn we would just have to scan the file and not compare every word of the file with yje shows name we have to broadcast.
