@@ -31,6 +31,36 @@ int slotId(string s)
     return 0;
 }
 
+string idToDay(int i){
+    switch(i)
+    {
+        case 0:
+            return "Sunday";
+        case 1:
+            return "Monday";
+        case 2:
+            return "Tuesday";
+        case 3:
+            return "Wednesday";
+        case 4:
+            return "Thursday";
+        case 5:
+            return "Friday";
+        case 6:
+            return "Saturday";
+        default:
+            return " ";
+    }
+}
+
+class record{
+    public:
+        string memberName;
+        int seriesID;
+        string Day;
+        int slot;
+};
+
 class series{
     public:
         int id;
@@ -192,13 +222,13 @@ bool conflict(int value,HashTable& hasht,int incrementJ,int day){
 }
 
 
-void TVScheduleFunction(HashTable& sample,vector<TVShow>& tv,vector<series>& ghi){
+void TVScheduleFunction(HashTable& sample,vector<TVShow>& tv,vector<series>& ghi,vector<record>& tvRecord){
     
     for(int p=0 ; p<7 ; p++)
     {
         for(int i=1 ; i<=5 ; i++)
         {
-            int f = 0;
+            int f = 0, n=0;
             for(int j=0 ; j<sample.ShowtimeToSeriesTable[i].size() ; j++)
             {
                 int h = sample.ShowtimeToSeriesTable[i][j];
@@ -217,6 +247,19 @@ void TVScheduleFunction(HashTable& sample,vector<TVShow>& tv,vector<series>& ghi
 
                         break;
                     }
+                    else
+                    {
+                        if(n==0)
+                        {
+                            record r;
+                            r.Day = idToDay(p);
+                            r.memberName = str;
+                            r.seriesID = h;
+                            r.slot = i;
+                            n = 1;
+                            tvRecord.push_back(r);
+                        }
+                    }
                 }
                 if(f == 1)
                     break;
@@ -232,6 +275,17 @@ void printTVSchedule(const vector<TVShow>& abc){
         {
             cout << j.name << " -> " << j.tvshowID << " -> " << j.slotid << endl;
         }
+        cout << endl;
+    }
+}
+
+void printRecord(vector<record>& v1){
+    for(const auto& i : v1)
+    {
+        cout << "Member Name: " << i.memberName << endl;
+        cout << "slotId : " << i.slot << endl;
+        cout << "Day : " << i.Day << endl;
+        cout << "seriesId : " << i.seriesID << endl;
         cout << endl;
     }
 }
@@ -306,6 +360,8 @@ int main(){
     }
 
     seriestable.insert(abc);
+
+    vector<record> tvRecord;
     
     vector<TVShow> tv(10);
     TVScheduleFunction(seriestable,tv,ghi);
@@ -314,7 +370,7 @@ int main(){
     cout << "TV Schedule is :- " << endl;
     printTVSchedule(tv);
 
-   
+   printRecord(tvRecord);
 
     return 0;
 }
