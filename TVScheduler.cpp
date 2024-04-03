@@ -283,6 +283,36 @@ int main(){
         }
         abc.push_back(m);
     }
+    HashTable seriestable;
+    for(const auto& i : abc)
+    {
+        for(const auto& j : i.favorite_series)
+        {
+            seriestable.insert(i.name,j);
+        }
+    }
+
+    for(const auto& j : ghi)                        
+    {
+        seriestable.insert(j.showtime,j.id);
+    }
+    
+    for(const auto& i : abc)
+    {
+        for(const auto& j : i.favserID)
+        {
+            seriestable.insert(j,i.name);
+        }
+    }
+
+    seriestable.insert(abc);
+    
+    vector<TVShow> tv(10);
+    TVScheduleFunction(seriestable,tv,ghi);
+    cout << endl;
+
+    cout << "TV Schedule is :- " << endl;
+    printTVSchedule(tv);
 
    
 
