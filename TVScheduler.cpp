@@ -175,7 +175,21 @@ string idtoname(vector<series>& ghi,int p){
     return " ";
 }
 
-
+bool conflict(int value,HashTable& hasht,int incrementJ,int day){
+    for(int i=0 ; i<hasht.ShowtimeToSeriesTable[incrementJ].size() ; i++)
+    {
+        int sd = hasht.ShowtimeToSeriesTable[incrementJ][i];
+        for(int k=0 ; k<hasht.SeriesIdToMemberTable[sd].size() ; k++)
+        {
+            string str = hasht.SeriesIdToMemberTable[sd][k];
+            if(hasht.MemberToFreeSlotTable[str][day] == value)
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
 
 
 void TVScheduleFunction(HashTable& sample,vector<TVShow>& tv,vector<series>& ghi){
