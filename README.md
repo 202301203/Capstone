@@ -40,6 +40,12 @@ such as efficient storage, retrieval, prioritization, and organization of data.
 
 What was our approach for this Problem? : We have given information of members of a family along with their favorite series,and availability slots. We have created a TVChanel Scheduler that assigns member to a particular slot, if the show is on air and member is free. furthemore we have checked if there is a conflict between members, that is 2 or more members having same time slots but different favourite series that are on air. If we cannot schedule a series than scheduler will make data of series to be recorded based on priority given to member having watched less series. In additional we have also scheduled the recorded series randomly, that can help family members to minimize total number of misses. We have created a Notification Function. This function gives a pop-up notification and an hour before the member has assigned to a slot.
 
-
+Contribution:
+All the members have equally contributed in the understanding of the question and generating algorithm of the code.
+Here are some special parts that each member have handled individually.
+1.Dhruvinee(202301203) - Writing TVChenal Scheduler Function,handling conflict function and some miscellaneous class.(35%)
+2.Dhara(202301195) - Writing Notification function.(25%)
+3.Dhruvi(202301401) - Writing function that schedule recorded series.(20%)
+4.Rutu(202301235) - Writing function to sort vector and printing it.(20%)
 
 
