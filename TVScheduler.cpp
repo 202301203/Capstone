@@ -316,6 +316,51 @@ void printTVSchedule(const vector<TVShow>& abc){
         cout << endl;
     }
 }
+void ScheduleRecorded(vector<TVShow>& tv,vector<slot>& record,vector<vector<bool>>& availStatus,vector<Member>& m1,HashTable& ht)
+{
+    for(int i=0 ; i<7 ; i++)
+    {
+        for(int j=1 ; j<=S ; j++)
+        {
+            priority_queue<slot,vector<slot>,MyComparator> pq;
+            slot w;
+            for(int k=0 ; k<record.size() ; k++)
+            {
+                if(!availStatus[i][j-1] && ht.MemberToFreeSlotTable[record[k].m2[0].name][i] == j)
+                {
+                    record[k].slotid = j;
+                    for(int g=0 ; g<m1.size() ; g++)
+                    {
+                        if(m1[g].name == record[k].m2[0].name)
+                        {
+                            m1[g].flag++;
+                            break;
+                        }
+                    }
+                    pq.push(record[k]);
+                }
+            }
+            if(!pq.empty())
+            {
+                int removeIndex = -1;
+                tv[i].DaysOfWeek.push_back(pq.top());
+                availStatus[i][j] = true;
+                for(int r=0 ; r<record.size() ; r++)
+                {
+                    if(record[r].m2[0].name == pq.top().m2[0].name && record[r].tvshowName == pq.top().tvshowName)
+                    {
+                        removeIndex = r;
+                        if (removeIndex != -1) 
+                        {
+                            record.erase(record.begin() + removeIndex);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 void printRecord(vector<record>& v1){
     for(const auto& i : v1)
