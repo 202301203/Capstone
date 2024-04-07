@@ -109,7 +109,7 @@ class Member {
 
 class HashTable{
     public:
-        unordered_map<string, list<string>> table;
+
         unordered_map<int,vector<int>> ShowtimeToSeriesTable;
         unordered_map<int,vector<string>> SeriesIdToMemberTable;
         unordered_map<string,vector<int>> MemberToFreeSlotTable;
@@ -149,51 +149,6 @@ class HashTable{
         vector<int> getseries(int showtime){
             return ShowtimeToSeriesTable[showtime];
         }
-
-        list<string> getseries(const string& member){
-            return table[member];
-        }
-
-        void print()
-        {
-            for(const auto& i : table)
-            {    cout << i.first << " -> " ;
-                for(const auto& j : i.second)
-                    cout << j << " , ";
-                cout << endl;
-            }      
-        }
-
-        void prints()
-        {
-            for(const auto& i : ShowtimeToSeriesTable)
-            {    cout << i.first << " -> " ;
-                for(const auto& j : i.second)
-                    cout << j << " , ";
-                cout << endl;
-            }      
-        }
-
-        void printm()
-        {
-            for(const auto& i : SeriesIdToMemberTable)
-            {    cout << i.first << " -> " ;
-                for(const auto& j : i.second)
-                    cout << j << " , ";
-                cout << endl;
-            }      
-        }
-
-        void printx()
-        {
-            for(const auto& i : MemberToFreeSlotTable)
-            {    cout << i.first << " -> " ;
-                for(const auto& j : i.second)
-                    cout << j << " , ";
-                cout << endl;
-            }      
-        }
-
 };
 
 string idtoname(vector<series>& ghi,int p){
@@ -204,15 +159,14 @@ string idtoname(vector<series>& ghi,int p){
     }
     return " ";
 }
-
+//conflict function
 bool conflict(int value,HashTable& hasht,int incrementJ,int day){
     for(int i=0 ; i<hasht.ShowtimeToSeriesTable[incrementJ].size() ; i++)
     {
         int sd = hasht.ShowtimeToSeriesTable[incrementJ][i];
         for(int k=0 ; k<hasht.SeriesIdToMemberTable[sd].size() ; k++)
         {
-            string str = hasht.SeriesIdToMemberTable[sd][k];
-            if(hasht.MemberToFreeSlotTable[str][day] == value)
+            if(hasht.SeriesIdToMemberTable[sd][k].availability[day] == value)
             {
                 return true;
             }
@@ -220,7 +174,6 @@ bool conflict(int value,HashTable& hasht,int incrementJ,int day){
     }
     return false;
 }
-
 //TVSchedule Function
 void TVScheduleFunction(HashTable& sample,vector<TVShow>& tv,vector<series>& ghi,vector<slot>& tvrecord,vector<Member>& m1,vector<vector<bool>>& slotavailability)
 {
@@ -305,17 +258,43 @@ void TVScheduleFunction(HashTable& sample,vector<TVShow>& tv,vector<series>& ghi
         }
     }
 }
-
-void printTVSchedule(const vector<TVShow>& abc){
-    for(const auto& i : abc)
-    {
-        for(const auto& j : i.day)
+//notification function
+void Notification(vector<TVShow>& tv)
+{
+    for(int d=0 ; d<7 ; d++)
+    {   
+        
+        int i=0; 
+        while(1)
         {
-            cout << j.name << " -> " << j.tvshowID << " -> " << j.slotid << endl;
+            time_t samay;
+            time(&samay);
+            struct tm* ti = localtime(&samay);
+            if((slotIdtoTime(tv[d].DaysOfWeek[i].slotid)-1) == ti->tm_hour)
+            {
+                string buffer = tv[d].DaysOfWeek[i].m2[0].name;
+                // Format the message
+                for(int l=1 ; l<tv[d].DaysOfWeek[i].m2.size()-1 ; l++)
+                {
+                    buffer += tv[d].DaysOfWeek[i].m2[l].name;
+                    if(l<(tv[d].DaysOfWeek[i].m2.size()-2))
+                        buffer += " and ";
+                }
+                buffer += " is Scheduled for the TV after an Hour!";
+                MessageBox(NULL,buffer.c_str(),"Notification",MB_OK);
+                i++;
+                if(i == 15)
+                    break;
+            }
+            else if(slotIdtoTime(i) < ti->tm_hour)
+            {
+                i++;
+            }
         }
-        cout << endl;
     }
 }
+
+//schedule recorder data
 void ScheduleRecorded(vector<TVShow>& tv,vector<slot>& record,vector<vector<bool>>& availStatus,vector<Member>& m1,HashTable& ht)
 {
     for(int i=0 ; i<7 ; i++)
@@ -362,16 +341,6 @@ void ScheduleRecorded(vector<TVShow>& tv,vector<slot>& record,vector<vector<bool
     }
 }
 
-void printRecord(vector<record>& v1){
-    for(const auto& i : v1)
-    {
-        cout << "Member Name: " << i.memberName << endl;
-        cout << "slotId : " << i.slot << endl;
-        cout << "Day : " << i.Day << endl;
-        cout << "seriesId : " << i.seriesID << endl;
-        cout << endl;
-    }
-}
 void printTable(const vector<TVShow>& tvShows) {
     // Print header
     cout << setw(10) << "TV Schedule" << endl;
@@ -489,6 +458,7 @@ int main(){
     printTVSchedule(tv);
 
    printRecord(tvRecord);
+    notification(tv);
 
     return 0;
 }
