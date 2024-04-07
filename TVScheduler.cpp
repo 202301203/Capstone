@@ -1,3 +1,4 @@
+#include<windows.h>
 #include<iostream>
 #include<map>
 #include<fstream>
@@ -6,29 +7,95 @@
 #include<unordered_map>
 #include <vector>
 #include<list>
+#include<queue>
 #include<cstdlib>
-#define M 15
-#define N 5
+#include<unistd.h>
+#include<iomanip>
+#include <stdio.h>
+#include<algorithm>
+#include <cstdio>
+#define N 10
+#define S 15
 #define TABLE_SIZE 20
-//N is series input
-//S is going to be actual input
 
 using namespace std;
+
+class slot;
+class Member {
+    public:
+        string member_id;
+        string name;
+        vector<string> favorite_series;
+        vector<int> availability;
+        vector<int> favserID;
+        int flag = 0;
+};
 
 int slotId(string s)
 {
     map<string,int> TimeToSlot;
-    TimeToSlot["6:00-7:00"] = 1;
-    TimeToSlot["7:00-8:00"] = 2;
-    TimeToSlot["8:00-9:00"] = 3;
-    TimeToSlot["9:00-10:00"] = 4;
-    TimeToSlot["10:00-11:00"] = 5;
+    TimeToSlot["8:00-9:00"] = 1;
+    TimeToSlot["9:00-10:00"] = 2;
+    TimeToSlot["10:00-11:00"] = 3;
+    TimeToSlot["11:00-12:00"] = 4;
+    TimeToSlot["12:00-13:00"] = 5;
+    TimeToSlot["13:00-14:00"] = 6;
+    TimeToSlot["14:00-15:00"] = 7;
+    TimeToSlot["15:00-16:00"] = 8;
+    TimeToSlot["16:00-17:00"] = 9;
+    TimeToSlot["17:00-18:00"] = 10;
+    TimeToSlot["18:00-19:00"] = 11;
+    TimeToSlot["19:00-20:00"] = 12;
+    TimeToSlot["20:00-21:00"] = 13;
+    TimeToSlot["21:00-22:00"] = 14;
+    TimeToSlot["22:00-23:00"] = 15;
     for(const auto& i : TimeToSlot)
     {
         if(i.first == s)
             return i.second;
     }
     return 0;
+}
+
+int slotIdtoTime(int k)
+{
+    switch(k)
+    {
+        case 1:
+            return 8;
+        case 2:
+            return 9;
+        case 3:
+            return 10;
+        case 4:
+            return 11;
+        case 5:
+            return 12;
+        case 6:
+            return 13;
+        case 7:
+            return 14;
+        case 8:
+            return 15;
+        case 9:
+            return 16;
+        case 10:
+            return 17;
+        case 11:
+            return 18;
+        case 12:
+            return 19;
+        case 13:
+            return 20;
+        case 14:
+            return 21;
+        case 15:
+            return 22;
+        case 16:
+            return 23;
+        default:
+            return 0;
+    }
 }
 
 string idToDay(int i){
@@ -53,12 +120,12 @@ string idToDay(int i){
     }
 }
 
-class record{
+class slot{
     public:
-        string memberName;
-        int seriesID;
-        string Day;
-        int slot;
+        string tvshowName;
+        int slotid;
+        string day;
+        vector<Member> m2;
 };
 
 class series{
@@ -78,40 +145,33 @@ int sereiseID(vector<series>& abc,string s)
     return 0;
 }
 
-class slot{
-    public:
-        string name;
-        string tvshowID;
-        int slotid;
+struct MyComparator {
+    bool operator()(const slot& a, const slot& b) const {
+        int s=a.m2[0].flag , r=b.m2[0].flag;
+        for(const auto& i : a.m2)
+        {
+            if(i.flag < s)
+                s = i.flag;
+        }
+        for(const auto& i : b.m2)
+        {
+            if(i.flag < r)
+                r = i.flag;
+        }
+        return s > r;
+    }
 };
 
 class TVShow{                                       //vector<TVShow>
     public:
-        vector<slot> day;
-
-        void output(){
-            for(const auto& i : day)
-            {
-                cout << i.name << " -> " << i.tvshowID << " -> " << i.slotid << endl;
-            }
-            cout << endl;
-        }
+        vector<slot> DaysOfWeek;
 };
 
-class Member {
-    public:
-        string member_id;
-        string name;
-        vector<string> favorite_series;
-        vector<int> availability;
-        vector<int> favserID;
-};
 
 class HashTable{
     public:
-
         unordered_map<int,vector<int>> ShowtimeToSeriesTable;
-        unordered_map<int,vector<string>> SeriesIdToMemberTable;
+        unordered_map<int,vector<Member> SeriesIdToMemberTable;
         unordered_map<string,vector<int>> MemberToFreeSlotTable;
 
         // Hash function
@@ -124,11 +184,6 @@ class HashTable{
         }
 
     public:
-
-        void insert(const string& member,const string& series){
-            table[member].push_back(series);
-        }
-
         void insert(int showtime,int seriesID)
         {
             ShowtimeToSeriesTable[showtime].push_back(seriesID);
@@ -145,10 +200,6 @@ class HashTable{
                 MemberToFreeSlotTable[i.name].push_back(j);
             }
         }
-
-        vector<int> getseries(int showtime){
-            return ShowtimeToSeriesTable[showtime];
-        }
 };
 
 string idtoname(vector<series>& ghi,int p){
@@ -159,6 +210,7 @@ string idtoname(vector<series>& ghi,int p){
     }
     return " ";
 }
+
 //conflict function
 bool conflict(int value,HashTable& hasht,int incrementJ,int day){
     for(int i=0 ; i<hasht.ShowtimeToSeriesTable[incrementJ].size() ; i++)
@@ -174,6 +226,7 @@ bool conflict(int value,HashTable& hasht,int incrementJ,int day){
     }
     return false;
 }
+
 //TVSchedule Function
 void TVScheduleFunction(HashTable& sample,vector<TVShow>& tv,vector<series>& ghi,vector<slot>& tvrecord,vector<Member>& m1,vector<vector<bool>>& slotavailability)
 {
@@ -258,6 +311,7 @@ void TVScheduleFunction(HashTable& sample,vector<TVShow>& tv,vector<series>& ghi
         }
     }
 }
+
 //notification function
 void Notification(vector<TVShow>& tv)
 {
@@ -377,9 +431,8 @@ void sort(vector<TVShow>& tv)
         }
     }
 }
-int main(){
-    
 
+int main(){
     system("clear");
     ifstream sample("TempFile.csv");
     ifstream sh("sampleshowtime.csv");
@@ -456,8 +509,6 @@ int main(){
 
     cout << "TV Schedule is :- " << endl;
     printTVSchedule(tv);
-
-   printRecord(tvRecord);
     notification(tv);
 
     return 0;
