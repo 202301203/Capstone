@@ -171,7 +171,7 @@ class TVShow{                                       //vector<TVShow>
 class HashTable{
     public:
         unordered_map<int,vector<int>> ShowtimeToSeriesTable;
-        unordered_map<int,vector<Member> SeriesIdToMemberTable;
+        unordered_map<int,vector<Member>> SeriesIdToMemberTable;
         unordered_map<string,vector<int>> MemberToFreeSlotTable;
 
         // Hash function
@@ -184,24 +184,25 @@ class HashTable{
         }
 
     public:
-        void insert(int showtime,int seriesID)
-        {
-            ShowtimeToSeriesTable[showtime].push_back(seriesID);
-        }
 
-        void insert(int sID,string Mname){
-            SeriesIdToMemberTable[sID].push_back(Mname);
-        }
-
-        void insert(vector<Member>& m){
+         void insert(vector<Member>& m){
             for(const auto& i : m)
             {
                 for(const auto& j : i.availability)
                 MemberToFreeSlotTable[i.name].push_back(j);
             }
         }
-};
 
+        void insert(int showtime,int seriesID)
+        {
+            ShowtimeToSeriesTable[showtime].push_back(seriesID);
+        }
+
+        void insert(int sID,Member m1){
+            SeriesIdToMemberTable[sID].push_back(m1);
+        }
+
+};
 string idtoname(vector<series>& ghi,int p){
     for(const auto& i : ghi)
     {
@@ -503,9 +504,6 @@ int main(){
     vector<TVShow> tv(105);
     TVScheduleFunction(seriestable,tv,ghi,tvRecord,abc,assignStatus);
     cout << endl;
-
-    cout << "\nSeries to be record : - " << endl;
-    printRecord(tvRecord);
     
     ScheduleRecorded(tv, tvRecord,assignStatus,abc,seriestable);
     sort(tv);
