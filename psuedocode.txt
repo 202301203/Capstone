@@ -1,5 +1,1 @@
-Including necessary libraries for the data structures
-Define M, N, TABLE_SIZE
-function slotId : Mapping of TimeToSlot - returns series
-class series : deine int id, string name, int showtime.
-function seriesID : 
+
