@@ -37,6 +37,9 @@ Priority Queue: Priority queue is used to prioritize slots based on certain crit
 Overall, these data structures are chosen based on their suitability for specific tasks within the program.
 such as efficient storage, retrieval, prioritization, and organization of data.
 
-What Do we Understand By this Problem? :
+
+What was our approach for this Problem? : We have given information of members of a family along with their favorite series,and availability slots. We have created a TVChanel Scheduler that assigns member to a particular slot, if the show is on air and member is free. furthemore we have checked if there is a conflict between members, that is 2 or more members having same time slots but different favourite series that are on air. If we cannot schedule a series than scheduler will make data of series to be recorded based on priority given to member having watched less series. In additional we have also scheduled the recorded series randomly, that can help family members to minimize total number of misses. We have created a Notification Function. This function gives a pop-up notification and an hour before the member has assigned to a slot.
+
+
 
 
