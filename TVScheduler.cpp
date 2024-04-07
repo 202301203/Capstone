@@ -503,19 +503,15 @@ int main(){
     vector<TVShow> tv(105);
     TVScheduleFunction(seriestable,tv,ghi,tvRecord,abc,assignStatus);
     cout << endl;
+
+    cout << "\nSeries to be record : - " << endl;
+    printRecord(tvRecord);
     
     ScheduleRecorded(tv, tvRecord,assignStatus,abc,seriestable);
     sort(tv);
-    cout << "\nSlot Availability: " << endl;
-    for (int i = 0; i < 7; i++) {
-        cout << "Day " << (i + 1) << ": ";
-        for (int j = 0; j < 15; j++) {
-            cout << (assignStatus[i][j] ? "1" : "0")<< " ";
-        }
-        cout << endl;
-    }
+   
     printTable(tv);
     Notification(tv);
     
-    return 0;
+    return 0;
 }
