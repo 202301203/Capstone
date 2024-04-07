@@ -433,9 +433,10 @@ void sort(vector<TVShow>& tv)
 }
 
 int main(){
-    system("clear");
-    ifstream sample("TempFile.csv");
-    ifstream sh("sampleshowtime.csv");
+    
+    system("cls");
+    ifstream sample("TempFileSaloni.csv");
+    ifstream sh("sampleshowtimeSaloni.csv");
     string line;
 
     vector<series> ghi;
@@ -477,14 +478,10 @@ int main(){
         }
         abc.push_back(m);
     }
+
     HashTable seriestable;
-    for(const auto& i : abc)
-    {
-        for(const auto& j : i.favorite_series)
-        {
-            seriestable.insert(i.name,j);
-        }
-    }
+    
+    seriestable.insert(abc);
 
     for(const auto& j : ghi)                        
     {
@@ -495,21 +492,30 @@ int main(){
     {
         for(const auto& j : i.favserID)
         {
-            seriestable.insert(j,i.name);
+            seriestable.insert(j,i);
         }
     }
-
-    seriestable.insert(abc);
-
-    vector<record> tvRecord;
     
-    vector<TVShow> tv(10);
-    TVScheduleFunction(seriestable,tv,ghi);
+    vector<slot> tvRecord;
+
+    vector<vector<bool>> assignStatus; 
+    
+    vector<TVShow> tv(105);
+    TVScheduleFunction(seriestable,tv,ghi,tvRecord,abc,assignStatus);
     cout << endl;
-
-    cout << "TV Schedule is :- " << endl;
-    printTVSchedule(tv);
-    notification(tv);
-
+    
+    ScheduleRecorded(tv, tvRecord,assignStatus,abc,seriestable);
+    sort(tv);
+    cout << "\nSlot Availability: " << endl;
+    for (int i = 0; i < 7; i++) {
+        cout << "Day " << (i + 1) << ": ";
+        for (int j = 0; j < 15; j++) {
+            cout << (assignStatus[i][j] ? "1" : "0")<< " ";
+        }
+        cout << endl;
+    }
+    printTable(tv);
+    Notification(tv);
+    
     return 0;
 }
