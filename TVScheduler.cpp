@@ -327,7 +327,42 @@ void printRecord(vector<record>& v1){
         cout << endl;
     }
 }
+void printTable(const vector<TVShow>& tvShows) {
+    // Print header
+    cout << setw(10) << "TV Schedule" << endl;
+    cout << "-------------------------------------------------------------------" << endl;
+    cout << setw(10) << "Day" << setw(20) << "Member Name" << setw(25) << "TV Show Name" << setw(10) << "Slot" << endl;
+    cout << "-------------------------------------------------------------------" << endl;
 
+    // Print data
+    for (int day = 0; day < tvShows.size(); ++day) {
+        for (int k=0 ; k<tvShows[day].DaysOfWeek.size() ; k++) {
+            for(int p=0 ; p<tvShows[day].DaysOfWeek[k].m2.size() ; p++)
+            cout << "|" << setw(9) << idToDay(day) << setw(1) << "|" << setw(19) << tvShows[day].DaysOfWeek[k].m2[p].name << setw(1) << "|" << setw(24) << tvShows[day].DaysOfWeek[k].tvshowName << setw(1) << "|" << setw(9) << tvShows[day].DaysOfWeek[k].slotid << setw(1) << "|" << endl;
+        }
+        cout << endl;
+        if(day == 6)
+            cout << "---------------------------------------------------------------------" << endl;
+    }    
+}
+void sort(vector<TVShow>& tv)
+{
+    for(int i=0 ; i<7 ; i++)
+    {
+        for(int j=0 ; j<tv[i].DaysOfWeek.size() ; j++)
+        {
+            for(int k=j ; k<tv[i].DaysOfWeek.size() ; k++)
+            {
+                if(tv[i].DaysOfWeek[j].slotid > tv[i].DaysOfWeek[k].slotid)
+                {
+                    slot temp = tv[i].DaysOfWeek[j];
+                    tv[i].DaysOfWeek[j] = tv[i].DaysOfWeek[k];
+                    tv[i].DaysOfWeek[k] = temp;
+                }
+            }
+        }
+    }
+}
 int main(){
     
 
