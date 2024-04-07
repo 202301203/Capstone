@@ -221,49 +221,87 @@ bool conflict(int value,HashTable& hasht,int incrementJ,int day){
     return false;
 }
 
-
-void TVScheduleFunction(HashTable& sample,vector<TVShow>& tv,vector<series>& ghi,vector<record>& tvRecord){
-    
-    for(int p=0 ; p<7 ; p++)
+//TVSchedule Function
+void TVScheduleFunction(HashTable& sample,vector<TVShow>& tv,vector<series>& ghi,vector<slot>& tvrecord,vector<Member>& m1,vector<vector<bool>>& slotavailability)
+{
+    int numDays = 7;
+    int numSlot = 15;
+    //int l = numDays*numSlot;
+    //tvrecord.resize(l);
+    slotavailability.resize(numDays);
+    for(int i=0 ; i<numDays ; i++)
     {
-        for(int i=1 ; i<=5 ; i++)
-        {
-            int f = 0, n=0;
-            for(int j=0 ; j<sample.ShowtimeToSeriesTable[i].size() ; j++)
-            {
-                int h = sample.ShowtimeToSeriesTable[i][j];
-                for(int k=0 ; k<sample.SeriesIdToMemberTable[h].size() ; k++)
-                {
-                    int jsincrement = j + 1;
-                    string str = sample.SeriesIdToMemberTable[h][k];
-                    if(sample.MemberToFreeSlotTable[str][p] == i && !conflict(i,sample,jsincrement,p))
-                    {
-                        slot d;
-                        d.name = str;
-                        d.tvshowID = idtoname(ghi,h);
-                        d.slotid = i;
-                        tv[p].day.push_back(d);
-                        f = 1;
+        slotavailability[i].resize(numSlot,false);
+    }
 
-                        break;
-                    }
-                    else
+    for(int divas=0 ; divas<7 ; divas++)
+    {
+        for(int sl=1 ; sl<=numSlot ; sl++)
+        {
+            priority_queue<slot,vector<slot>,MyComparator> pq;
+            int f = 0;
+            for(int j=0 ; j<sample.ShowtimeToSeriesTable[sl].size() ; j++)
+            {
+                int Jsincrement = j + 1;
+                if(f == 0 && !conflict(sl,sample,Jsincrement,divas))
+                {
+                    int h = sample.ShowtimeToSeriesTable[sl][j];
+                    for(int k=0 ; k<sample.SeriesIdToMemberTable[h].size() ; k++)
                     {
-                        if(n==0)
+                        if(sample.SeriesIdToMemberTable[h][k].availability[divas] == sl)
                         {
-                            record r;
-                            r.Day = idToDay(p);
-                            r.memberName = str;
-                            r.seriesID = h;
-                            r.slot = i;
-                            n = 1;
-                            tvRecord.push_back(r);
+                            slot temp;
+                            temp.m2.push_back(sample.SeriesIdToMemberTable[h][k]);      //Member Name
+                            temp.tvshowName = idtoname(ghi,h);
+                            temp.slotid = sl;
+                            temp.day = idToDay(divas);
+                            tv[divas].DaysOfWeek.push_back(temp);
+                            f = 1;
+                            for(int g=0 ; g<m1.size() ; g++)
+                            {
+                                if(m1[g].name == sample.SeriesIdToMemberTable[h][k].name)
+                                {
+                                    m1[g].flag++;
+                                    break;
+                                }
+                            }
+                            slotavailability[divas][sl-1] = true;
+                        }
+                        else
+                        {
+                            slot temp;
+                            temp.m2.push_back(sample.SeriesIdToMemberTable[h][k]);        //Member Name
+                            temp.tvshowName = idtoname(ghi,h);
+                            temp.slotid = sl;
+                            temp.day = idToDay(divas);
+                            for(int g=0 ; g<m1.size() ; g++)
+                            {
+                                if(m1[g].name == sample.SeriesIdToMemberTable[h][k].name)
+                                {
+                                    temp.m2[0].flag = m1[g].flag;
+                                    break;
+                                }
+                            }
+                            pq.push(temp);
                         }
                     }
                 }
-                if(f == 1)
-                    break;
             }
+            if(!pq.empty())
+            {
+                tvrecord.push_back(pq.top());
+                for(int g=0 ; g<m1.size() ; g++)
+                {
+                    for(int p=0 ; p<pq.top().m2.size() ; p++)
+                    {
+                        if(m1[g].name == pq.top().m2[p].name)
+                        {
+                            m1[g].flag++;
+                            break;
+                        }
+                    }
+                }
+            }    
         }
     }
 }
