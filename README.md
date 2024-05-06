@@ -50,3 +50,6 @@ such as efficient storage, retrieval, prioritization, and organization of data.
 3. Dhruvi(202301401) - Writing function that schedule recorded series.(20%)
 
 4. Rutu(202301235) - Writing function to sort vector and printing it.(20%)
+
+## Project_PPT:
+[-Presentation](https://onedrive.live.com/view.aspx?resid=D4A452291CCA9DD5%214114&authkey=!AEq876pf64F5fMg)
